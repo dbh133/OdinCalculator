@@ -1,92 +1,90 @@
 const btns = document.querySelectorAll('button');
 const display = document.querySelector('.calcDisplay');
-let num1 = 0;
-let num2 = 0;
+let num1 = null;
+let num2 = null;
+let total = 0;
+let operator = null;
 
 function resetDisplay() {
 	display.textContent = '0';
+	num1 = null;
+	num2 = null;
 }
 
-function add(x, y) {
-	return x + y;
+function storeOperator(op) {
+	if (operator === null) {
+		operator = op;
+	} else {
+		display.textContent = operation(num1, num2, operator);
+		operator = op;
+	}
+}
+function storeNums(x) {
+	if (num1 === null) {
+		num1 = x;
+	} else if (num1 !== null) {
+		num2 = x;
+	} else if (num1 !== null && num2 !== null) {
+		display.textContent = operation(num1, num2, operator);
+		// operator = null;
+	}
 }
 
-function sub(x, y) {
-	return x - y;
+function operation(x, y, op) {
+	if (op === operator) {
+		return x + y;
+	} else if (op === operator) {
+		return x - y;
+	} else if (op === operator) {
+		return x * y;
+	} else if (op === operator) {
+		if (y === 0) {
+			return "Can't Divide By Zero!";
+		} else {
+			return x / y;
+		}
+	}
 }
 
-function mult(x, y) {
-	return x * y;
-}
-
-function divide(x, y) {
-	return x / y;
+function updateDisplay(displayValue) {
+	if (num1 === null) {
+		if (display.textContent === '0') {
+			display.textContent = displayValue;
+		} else {
+			display.textContent += displayValue;
+		}
+	} else {
+		if (parseInt(display.textContent) === num1) {
+			display.textContent = displayValue;
+		} else {
+			display.textContent += displayValue;
+		}
+	}
 }
 
 function inputNumbers() {
-	let operator = '';
-	let previousOperator = '';
-
 	btns.forEach((btn) => {
 		btn.addEventListener('click', () => {
 			if (btn.className !== 'operator') {
-				if (display.textContent === '0') {
-					display.textContent = btn.textContent;
-				} else {
-					display.textContent += btn.textContent;
-				}
+				updateDisplay(btn.textContent);
 			}
-
 			if (btn.id === 'delete') {
 				resetDisplay();
-				num1 = 0;
-				num2 = 0;
 			}
 
-			if (btn.id === 'add') {
-				operator = btn.id;
-				num1 += parseInt(display.textContent);
-				resetDisplay();
+			if (btn.className === 'operator' && btn.id !== 'equals') {
+				storeOperator(btn.id);
+				storeNums(parseInt(display.textContent));
 			}
 
-			if (btn.id === 'sub') {
-				operator = btn.id;
-				num1 += parseInt(display.textContent);
-				resetDisplay();
-			}
-
-			if (btn.id === 'mult') {
-				operator = btn.id;
-				num1 += parseInt(display.textContent);
-				resetDisplay();
-			}
-
-			if (btn.id === 'divide') {
-				operator = btn.id;
-				num1 += parseInt(display.textContent);
-				resetDisplay();
-			}
-
-			if (btn.id === 'equals') {
-				num2 = parseInt(display.textContent);
-
-				if (operator === 'add') {
-					display.textContent = add(num1, num2);
-					num1 = 0;
-					num2 = 0;
-				} else if (operator === 'sub') {
-					display.textContent = sub(num1, num2);
-					num1 = 0;
-					num2 = 0;
-				} else if (operator === 'mult') {
-					display.textContent = mult(num1, num2);
-					num1 = 0;
-					num2 = 0;
-				} else {
-					display.textContent = divide(num1, num2);
-					num1 = 0;
-					num2 = 0;
-				}
+			if (
+				btn.id === 'equals' &&
+				num1 !== null &&
+				num2 !== null &&
+				operator !== null
+			) {
+				num2 = display.textContent;
+				display.textContent = operation(num1, num2, operator);
 			}
 		});
 	});
