@@ -15,8 +15,11 @@ function storeOperator(op) {
 	if (operator === null) {
 		operator = op;
 	} else {
+		num2 = parseInt(display.textContent);
 		display.textContent = operation(num1, num2, operator);
 		operator = op;
+		num1 = parseInt(display.textContent);
+		num2 = null;
 	}
 }
 function storeNums(x) {
@@ -26,7 +29,6 @@ function storeNums(x) {
 		num2 = x;
 	} else if (num1 !== null && num2 !== null) {
 		display.textContent = operation(num1, num2, operator);
-		// operator = null;
 	}
 }
 
@@ -72,7 +74,11 @@ function inputNumbers() {
 				resetDisplay();
 			}
 
-			if (btn.className === 'operator' && btn.id !== 'equals') {
+			if (
+				btn.className === 'operator' &&
+				btn.id !== 'equals' &&
+				btn.id !== 'delete'
+			) {
 				storeOperator(btn.id);
 				storeNums(parseInt(display.textContent));
 			}
