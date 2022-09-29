@@ -4,11 +4,14 @@ let num1 = null;
 let num2 = null;
 let total = 0;
 let operator = null;
+let prevOp = null;
+let lastPress = null;
 
 function resetDisplay() {
 	display.textContent = '0';
 	num1 = null;
 	num2 = null;
+	operator = null;
 }
 
 function storeOperator(op) {
@@ -33,17 +36,17 @@ function storeNums(x) {
 }
 
 function operation(x, y, op) {
-	if (op === operator) {
+	if (op === 'add') {
 		return x + y;
-	} else if (op === operator) {
+	} else if (op === 'sub') {
 		return x - y;
-	} else if (op === operator) {
+	} else if (op === 'mult') {
 		return x * y;
-	} else if (op === operator) {
+	} else if (op === 'divide') {
 		if (y === 0) {
 			return "Can't Divide By Zero!";
 		} else {
-			return x / y;
+			return Math.fround(x / y);
 		}
 	}
 }
@@ -57,10 +60,45 @@ function updateDisplay(displayValue) {
 		}
 	} else {
 		if (parseInt(display.textContent) === num1) {
-			display.textContent = displayValue;
-		} else {
 			display.textContent += displayValue;
+		} else {
+			display.textContent = displayValue;
 		}
+	}
+}
+
+function lastPressed(num) {
+	switch (num) {
+		case 'one':
+			lastPress = 1;
+			break;
+		case 'two':
+			lastPress = 2;
+			break;
+		case 'three':
+			lastPress = 3;
+			break;
+		case 'four':
+			lastPress = 4;
+			break;
+		case 'five':
+			lastPress = 5;
+			break;
+		case 'six':
+			lastPress = 6;
+			break;
+		case 'seven':
+			lastPress = 7;
+			break;
+		case 'eight':
+			lastPress = 8;
+			break;
+		case 'nine':
+			lastPress = 9;
+			break;
+		case 'zero':
+			lastPress = 0;
+			break;
 	}
 }
 
@@ -83,14 +121,20 @@ function inputNumbers() {
 				storeNums(parseInt(display.textContent));
 			}
 
-			if (
-				btn.id === 'equals' &&
-				num1 !== null &&
-				num2 !== null &&
-				operator !== null
-			) {
-				num2 = display.textContent;
-				display.textContent = operation(num1, num2, operator);
+			if (btn.id === 'equals' && num1 !== null) {
+				if (operator !== null) {
+					num2 = parseInt(display.textContent);
+					display.textContent = operation(num1, num2, operator);
+					prevOp = operator;
+					operator = null;
+				} else if (operator === null && prevOp !== null) {
+					num1 = parseInt(display.textContent);
+					display.textContent = operation(num1, num2, prevOp);
+				}
+			}
+
+			if (btn.className === 'num') {
+				lastPressed(btn.id);
 			}
 		});
 	});
