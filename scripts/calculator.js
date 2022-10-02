@@ -5,7 +5,7 @@ let num2 = null;
 let total = 0;
 let operator = null;
 let prevOp = null;
-let lastPress = null;
+let equalsPressed = false;
 
 function resetDisplay() {
 	display.textContent = '0';
@@ -15,9 +15,9 @@ function resetDisplay() {
 }
 
 function storeOperator(op) {
-	if (operator === null) {
+	if (operator === null && prevOp === null) {
 		operator = op;
-	} else {
+	} else if(operator !== null && ) {
 		num2 = parseInt(display.textContent);
 		display.textContent = operation(num1, num2, operator);
 		operator = op;
@@ -60,45 +60,10 @@ function updateDisplay(displayValue) {
 		}
 	} else {
 		if (parseInt(display.textContent) === num1) {
-			display.textContent += displayValue;
-		} else {
 			display.textContent = displayValue;
+		} else {
+			display.textContent += displayValue;
 		}
-	}
-}
-
-function lastPressed(num) {
-	switch (num) {
-		case 'one':
-			lastPress = 1;
-			break;
-		case 'two':
-			lastPress = 2;
-			break;
-		case 'three':
-			lastPress = 3;
-			break;
-		case 'four':
-			lastPress = 4;
-			break;
-		case 'five':
-			lastPress = 5;
-			break;
-		case 'six':
-			lastPress = 6;
-			break;
-		case 'seven':
-			lastPress = 7;
-			break;
-		case 'eight':
-			lastPress = 8;
-			break;
-		case 'nine':
-			lastPress = 9;
-			break;
-		case 'zero':
-			lastPress = 0;
-			break;
 	}
 }
 
@@ -121,21 +86,7 @@ function inputNumbers() {
 				storeNums(parseInt(display.textContent));
 			}
 
-			if (btn.id === 'equals' && num1 !== null) {
-				if (operator !== null) {
-					num2 = parseInt(display.textContent);
-					display.textContent = operation(num1, num2, operator);
-					prevOp = operator;
-					operator = null;
-				} else if (operator === null && prevOp !== null) {
-					num1 = parseInt(display.textContent);
-					display.textContent = operation(num1, num2, prevOp);
-				}
-			}
 
-			if (btn.className === 'num') {
-				lastPressed(btn.id);
-			}
 		});
 	});
 }
