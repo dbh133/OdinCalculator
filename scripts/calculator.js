@@ -2,36 +2,48 @@ const btns = document.querySelectorAll('button');
 const display = document.querySelector('.calcDisplay');
 let num1 = null;
 let num2 = null;
-let total = 0;
 let operator = null;
 let prevOp = null;
-let equalsPressed = false;
+let equalsActive = false;
 
 function resetDisplay() {
 	display.textContent = '0';
 	num1 = null;
 	num2 = null;
 	operator = null;
+	prevOp = null;
+	equalsActive = false;
 }
 
 function storeOperator(op) {
 	if (operator === null && prevOp === null) {
 		operator = op;
-	} else if(operator !== null && ) {
-		num2 = parseInt(display.textContent);
-		display.textContent = operation(num1, num2, operator);
-		operator = op;
-		num1 = parseInt(display.textContent);
-		num2 = null;
+	} else {
+		if (num2 === null) {
+			storeNums(parseInt(display.textContent));
+		}
+		if (op !== 'equals' && equalsActive !== true) {
+			prevOp = operator;
+			operator = op;
+		}
+		if (prevOp !== operator) {
+			display.textContent = operation(num1, num2, operator);
+			num1 = parseInt(display.textContent);
+		} else {
+			display.textContent = operation(num1, num2, prevOp);
+			num1 = parseInt(display.textContent);
+		}
 	}
 }
+
 function storeNums(x) {
 	if (num1 === null) {
 		num1 = x;
-	} else if (num1 !== null) {
+	} else {
 		num2 = x;
-	} else if (num1 !== null && num2 !== null) {
-		display.textContent = operation(num1, num2, operator);
+	}
+	if (num1 !== null && num2 !== null && prevOp !== null) {
+		display.textContent = operation(num1, num2, prevOp);
 	}
 }
 
@@ -73,20 +85,27 @@ function inputNumbers() {
 			if (btn.className !== 'operator') {
 				updateDisplay(btn.textContent);
 			}
+
 			if (btn.id === 'delete') {
 				resetDisplay();
 			}
 
-			if (
-				btn.className === 'operator' &&
-				btn.id !== 'equals' &&
-				btn.id !== 'delete'
-			) {
-				storeOperator(btn.id);
-				storeNums(parseInt(display.textContent));
+			if (btn.className === 'operator' && btn.id !== 'delete') {
+				if (btn.id !== 'equals') {
+					storeOperator(btn.id);
+					if (num2 === null) {
+						storeNums(parseInt(display.textContent));
+					}
+				} else {
+					if ((num1 !== null) & (num2 === null)) {
+						storeNums(parseInt(display.textContent));
+						display.textContent = operation(num1, num2, operator);
+					} else {
+						num1 = parseInt(display.textContent);
+						display.textContent = operation(num1, num2, operator);
+					}
+				}
 			}
-
-
 		});
 	});
 }
