@@ -5,6 +5,7 @@ let num2 = null;
 let operator = null;
 let prevOp = null;
 let equalsActive = false;
+let decimalActive = false;
 
 function resetDisplay() {
 	display.textContent = '0';
@@ -13,37 +14,38 @@ function resetDisplay() {
 	operator = null;
 	prevOp = null;
 	equalsActive = false;
+	decimalActive = false;
 }
 
 function storeOperator(op) {
 	if (operator === null && prevOp === null) {
 		operator = op;
 	} else {
-		if (num2 === null) {
-			storeNums(parseInt(display.textContent));
-		}
-		if (op !== 'equals' && equalsActive !== true) {
-			prevOp = operator;
-			operator = op;
-		}
-		if (prevOp !== operator) {
+		prevOp = operator;
+		operator = op;
+	}
+	storeNums(parseInt(display.textContent));
+	if (num1 !== parseInt(display.textContent)) {
+		if (num1 !== null && num2 !== null && prevOp === null) {
 			display.textContent = operation(num1, num2, operator);
-			num1 = parseInt(display.textContent);
-		} else {
+		} else if (num1 !== null && num2 !== null && prevOp !== null) {
 			display.textContent = operation(num1, num2, prevOp);
-			num1 = parseInt(display.textContent);
 		}
 	}
+	if (operator !== null && num2 !== null) {
+		num1 = parseInt(display.textContent);
+		num2 = null;
+	}
+	decimalActive = false;
 }
 
 function storeNums(x) {
 	if (num1 === null) {
 		num1 = x;
 	} else {
-		num2 = x;
-	}
-	if (num1 !== null && num2 !== null && prevOp !== null) {
-		display.textContent = operation(num1, num2, prevOp);
+		if (num2 === null) {
+			num2 = x;
+		}
 	}
 }
 
@@ -56,9 +58,9 @@ function operation(x, y, op) {
 		return x * y;
 	} else if (op === 'divide') {
 		if (y === 0) {
-			return "Can't Divide By Zero!";
+			return "You can't break me!!!";
 		} else {
-			return Math.fround(x / y);
+			return (x / y).toFixed(2);
 		}
 	}
 }
@@ -82,7 +84,7 @@ function updateDisplay(displayValue) {
 function inputNumbers() {
 	btns.forEach((btn) => {
 		btn.addEventListener('click', () => {
-			if (btn.className !== 'operator') {
+			if (btn.className === 'num') {
 				updateDisplay(btn.textContent);
 			}
 
@@ -90,19 +92,32 @@ function inputNumbers() {
 				resetDisplay();
 			}
 
+			if (btn.className === 'decimal' && decimalActive === false) {
+				updateDisplay(btn.textContent);
+				decimalActive = true;
+			}
+
 			if (btn.className === 'operator' && btn.id !== 'delete') {
 				if (btn.id !== 'equals') {
-					storeOperator(btn.id);
-					if (num2 === null) {
-						storeNums(parseInt(display.textContent));
+					if (equalsActive === true) {
+						equalsActive = false;
+						storeOperator(btn.id);
+					} else {
+						storeOperator(btn.id);
 					}
 				} else {
-					if ((num1 !== null) & (num2 === null)) {
-						storeNums(parseInt(display.textContent));
-						display.textContent = operation(num1, num2, operator);
-					} else {
-						num1 = parseInt(display.textContent);
-						display.textContent = operation(num1, num2, operator);
+					if (num1 !== null) {
+						if (num2 === null) {
+							storeNums(parseInt(display.textContent));
+						}
+						if (equalsActive === false) {
+							display.textContent = operation(num1, num2, operator);
+							num1 = parseInt(display.textContent);
+							equalsActive = true;
+						} else {
+							num1 = parseInt(display.textContent);
+							display.textContent = operation(num1, num2, operator);
+						}
 					}
 				}
 			}
